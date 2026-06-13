@@ -172,18 +172,36 @@ function handleSubmit(e) {
   btn.disabled = true;
   span.textContent = 'Sending…';
 
-  emailjs.sendForm('service_urrd5or', 'template_qkbxofq', e.target)
-    .then(() => {
-      span.textContent = 'Sent ✓';
-      e.target.reset();
-      setTimeout(() => {
-        span.textContent = 'Send it →';
-        btn.disabled = false;
-      }, 3000);
+  fetch('https://formspree.io/f/maqzlrqo', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json' },
+    body: new FormData(e.target)
+  })
+    .then(res => {
+      if (res.ok) {
+        span.textContent = 'Sent ✓';
+        e.target.reset();
+        const fallback = document.getElementById('form-fallback');
+        if (fallback) fallback.remove();
+        setTimeout(() => {
+          span.textContent = 'Send it →';
+          btn.disabled = false;
+        }, 3000);
+      } else {
+        throw new Error('Non-OK response');
+      }
     })
     .catch((err) => {
-      console.error('EmailJS error:', err);
+      console.error('Form error:', err);
       span.textContent = 'Something went wrong — try again';
       btn.disabled = false;
+      const existing = document.getElementById('form-fallback');
+      if (!existing) {
+        const msg = document.createElement('p');
+        msg.id = 'form-fallback';
+        msg.innerHTML = 'Having trouble? Email directly at <a href="mailto:thetomeffect@gmail.com">thetomeffect@gmail.com</a>';
+        msg.style.cssText = 'margin-top:1rem;color:rgba(199,255,232,0.7);font-size:0.9rem;text-align:center;';
+        btn.parentNode.insertBefore(msg, btn.nextSibling);
+      }
     });
 }

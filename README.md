@@ -13,7 +13,7 @@ Live at: **ttephoto.co.uk**
 | HTML/CSS/JS | Vanilla, no framework | Performance — no bundle overhead |
 | Fonts | Google Fonts (Big Shoulders Display, Bebas Neue, Space Grotesk) | Loaded via `<link rel="preconnect">` to minimise render-blocking |
 | Icons | Font Awesome 6 (CDN) | Footer social icons only |
-| Contact form | [EmailJS](https://www.emailjs.com) | Zero-backend form submission — no server required |
+| Contact form | [Formspree](https://formspree.io) | Zero-backend form submission — no server required |
 | Background FX | HTML Canvas (vanilla JS) | Animated rain effect — canvas chosen over CSS for frame rate control |
 | Hosting | Vercel | Free tier, auto-deploy on push to `main`, custom domain support |
 
@@ -83,15 +83,17 @@ If adding more than 20 images, add new `<div class="portfolio-item">` entries to
 
 ---
 
-## EmailJS configuration
+## Contact form (Formspree)
 
-The public key is already initialised in `index.html`. Service ID and template ID are set in `js/main.js` inside the `handleSubmit` function:
+The contact form submits to Formspree via a `fetch` POST — no backend, no SDK, no auth tokens to expire. The endpoint is set in `js/main.js`:
 
 ```js
-emailjs.sendForm('service_urrd5or', 'template_qkbxofq', e.target)
+fetch('https://formspree.io/f/maqzlrqo', { ... })
 ```
 
-If the EmailJS account changes, update both values there. The template must include variables: `{{user_name}}`, `{{user_email}}`, `{{package}}`, `{{car}}`, `{{message}}`.
+Formspree forwards submissions to `thetomeffect@gmail.com`. If the Formspree account or form ever needs to change, update the endpoint URL in `handleSubmit` in `main.js`.
+
+If the form errors, a fallback message automatically appears below the submit button with a direct mailto link to `thetomeffect@gmail.com`.
 
 ---
 
