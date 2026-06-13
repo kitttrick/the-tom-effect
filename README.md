@@ -66,7 +66,18 @@ To replace or add images, update `setup.sh` with the new filenames and re-run it
 chmod +x setup.sh && ./setup.sh
 ```
 
-The script copies images from `~/Documents/toms images for webby/` and renames them to the numbered format the site expects. After running it, commit the updated `images/portfolio/` folder.
+The script copies images from `~/Documents/toms images for webby/` and renames them to the numbered format the site expects.
+
+**Always compress images before committing.** Original camera files can be 20–33MB each — far too large for web. After running `setup.sh`, compress the portfolio folder with ImageMagick:
+
+```bash
+cd images/portfolio
+for img in *.jpg; do
+  convert "$img" -resize "2000x2000>" -quality 82 -strip "$img"
+done
+```
+
+This resizes anything larger than 2000px on its longest side, strips embedded metadata, and applies quality 82 compression — bringing files down to roughly 200KB–1.2MB without visible quality loss. Original full-res files are kept separately and are not affected.
 
 If adding more than 20 images, add new `<div class="portfolio-item">` entries to the portfolio grid in `index.html` to match.
 
